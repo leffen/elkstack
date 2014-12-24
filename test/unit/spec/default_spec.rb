@@ -41,9 +41,6 @@ describe 'elkstack::cluster' do
   end
 
   it 'installs and configures nginx' do
-    expect(chef_run).to enable_service('nginx')
-    expect(chef_run).to start_service('nginx')
-
     expect(chef_run).to create_template('/etc/rackspace-monitoring-agent.conf.d/monitoring-service-tcp-monitor-nginx-80.yaml')
     expect(chef_run).to create_template('/etc/rackspace-monitoring-agent.conf.d/monitoring-service-tcp-monitor-nginx-443.yaml')
   end
