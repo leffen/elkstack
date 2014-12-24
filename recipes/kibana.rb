@@ -19,12 +19,6 @@ include_recipe 'elkstack::kibana_ssl'
 # (the main config file template includes both sites-enabled/* and conf.d/*)
 node.set['nginx']['default_site_enabled'] = node['kibana']['nginx']['enable_default_site']
 node.set['nginx']['install_method'] = node['kibana']['nginx']['install_method']
-include_recipe 'nginx' # so service[nginx] exists, the one from the LWRP above is not created until runtime
-file '/etc/nginx/conf.d/default.conf' do
-  action :delete
-  notifies :reload, 'service[nginx]'
-  only_if { rhel? }
-end
 
 # begin replaces 'kibana::install'
 if node['kibana']['user'].empty?
@@ -74,6 +68,13 @@ kibana_web 'kibana' do
   not_if { node['kibana']['webserver'].empty? }
 end
 # end replaces 'kibana::install'
+
+service 'nginx' # dummy service to notify
+file '/etc/nginx/conf.d/default.conf' do
+  action :delete
+  notifies :reload, 'service[nginx]'
+  only_if { rhel? }
+end
 
 # monitoring
 include_recipe 'elkstack::kibana_monitoring'
